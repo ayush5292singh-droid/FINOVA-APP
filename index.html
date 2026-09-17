@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090d19">
+  <meta name="description" content="FINANCE MANAGER MAX - Personal finance dashboard">
+  <title>FINANCE MANAGER MAX</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">PERSONAL FINANCE OS</p>
+        <h1>FINANCE <span>MANAGER</span></h1>
+      </div>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">☀</button>
+    </header>
+
+    <main id="app">
+      <section id="dashboard" class="screen active">
+        <div class="hero-card">
+          <div class="hero-head">
+            <span>Total Balance</span>
+            <button id="hideBalance" class="mini-btn">◉</button>
+          </div>
+          <h2 id="balance">₹0</h2>
+          <p class="muted">Your financial overview</p>
+          <div class="money-row">
+            <div><small>↗ Income</small><strong id="incomeTotal">₹0</strong></div>
+            <div><small>↘ Expenses</small><strong id="expenseTotal">₹0</strong></div>
+          </div>
+        </div>
+
+        <div class="quick-grid">
+          <button class="quick" data-go="income">＋<b>Income</b></button>
+          <button class="quick" data-go="expenses">−<b>Expense</b></button>
+          <button class="quick" data-go="scanner">▣<b>Scan Bill</b></button>
+          <button class="quick" data-go="loans">↻<b>Loan / EMI</b></button>
+        </div>
+
+        <div class="section-title"><h3>Financial Snapshot</h3></div>
+        <div class="stats-grid">
+          <div class="stat"><span>Saved</span><b id="savedTotal">₹0</b></div>
+          <div class="stat"><span>Loan Due</span><b id="loanDue">₹0</b></div>
+          <div class="stat"><span>Budget Used</span><b id="budgetUsed">0%</b></div>
+          <div class="stat"><span>Transactions</span><b id="transactionCount">0</b></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Cash Flow</h3><span class="pill">Overview</span></div>
+          <canvas id="cashChart"></canvas>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Recent Activity</h3><button class="text-btn" data-go="expenses">View all →</button></div>
+          <div id="recentList" class="list"></div>
+        </div>
+      </section>
+
+      <section id="income" class="screen">
+        <div class="page-heading"><p class="eyebrow">MONEY IN</p><h2>Income</h2><p class="muted">Track every source of income.</p></div>
+        <div class="form-card">
+          <h3>Add Income</h3>
+          <form id="incomeForm">
+            <input id="incomeName" placeholder="Source (e.g. Salary)" required>
+            <input id="incomeAmount" type="number" min="0.01" step="0.01" placeholder="Amount ₹" required>
+            <input id="incomeDate" type="date" required>
+            <select id="incomeCategory"><option>Salary</option><option>Business</option><option>Gift</option><option>Other</option></select>
+            <button class="primary" type="submit">＋ Add Income</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Income History</h3><div id="incomeList" class="list"></div></div>
+      </section>
+
+      <section id="expenses" class="screen">
+        <div class="page-heading"><p class="eyebrow">MONEY OUT</p><h2>Expenses</h2><p class="muted">Know where your money goes.</p></div>
+        <div class="form-card">
+          <h3>Record Expense</h3>
+          <form id="expenseForm">
+            <input id="expenseName" placeholder="Expense title" required>
+            <input id="expenseAmount" type="number" min="0.01" step="0.01" placeholder="Amount ₹" required>
+            <input id="expenseDate" type="date" required>
+            <select id="expenseCategory"><option>Food</option><option>Travel</option><option>Shopping</option><option>Bills</option><option>Education</option><option>Health</option><option>Other</option></select>
+            <select id="expenseAccount"><option>Cash</option><option>Bank</option><option>UPI</option><option>Card</option></select>
+            <input id="expenseNote" placeholder="Note (optional)">
+            <button class="primary" type="submit">− Save Expense</button>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Transactions</h3><button class="text-btn" id="exportBtn">Export CSV</button></div>
+          <input id="searchTransactions" class="search" placeholder="⌕ Search transactions...">
+          <div id="expenseList" class="list"></div>
+        </div>
+      </section>
+
+      <section id="scanner" class="screen">
+        <div class="page-heading"><p class="eyebrow">SMART DOCUMENTS</p><h2>Receipt Scanner</h2><p class="muted">Upload a bill and review its details before saving.</p></div>
+        <div class="scanner-box">
+          <div class="scan-symbol">▣</div>
+          <h3>Upload your receipt</h3>
+          <p class="muted">Choose a bill photo or PDF. You can review and enter the detected details below.</p>
+          <input id="receiptFile" type="file" accept="image/*,.pdf">
+          <img id="receiptPreview" class="receipt-preview" alt="Receipt preview">
+          <p id="fileStatus" class="muted"></p>
+        </div>
+        <div class="form-card">
+          <h3>Review Receipt Details</h3>
+          <p class="small muted">The browser version uses a review form. Automatic OCR can be connected later.</p>
+          <form id="receiptForm">
+            <input id="receiptMerchant" placeholder="Merchant name" required>
+            <input id="receiptAmount" type="number" min="0.01" step="0.01" placeholder="Total amount ₹" required>
+            <input id="receiptDate" type="date" required>
+            <select id="receiptCategory"><option>Food</option><option>Shopping</option><option>Bills</option><option>Travel</option><option>Other</option></select>
+            <button class="primary" type="submit">✓ Add to Expenses</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="loans" class="screen">
+        <div class="page-heading"><p class="eyebrow">DEBT CONTROL</p><h2>Loans & EMI</h2><p class="muted">Track repayment progress for every loan.</p></div>
+        <div class="form-card">
+          <h3>Add a Loan</h3>
+          <form id="loanForm">
+            <input id="loanName" placeholder="Loan name" required>
+            <input id="loanPrincipal" type="number" min="1" placeholder="Original principal ₹" required>
+            <input id="loanRate" type="number" min="0" step="0.01" placeholder="Annual interest %">
+            <input id="loanEmi" type="number" min="1" placeholder="Monthly EMI ₹" required>
+            <input id="loanPaid" type="number" min="0" placeholder="Already repaid ₹">
+            <input id="loanDueDate" type="date" required>
+            <button class="primary" type="submit">＋ Create Loan</button>
+          </form>
+        </div>
+        <div id="loanList" class="cards-list"></div>
+      </section>
+
+      <section id="savings" class="screen">
+        <div class="page-heading"><p class="eyebrow">FUTURE FUND</p><h2>Savings Goals</h2><p class="muted">Turn your plans into measurable goals.</p></div>
+        <div class="form-card">
+          <h3>New Savings Goal</h3>
+          <form id="goalForm">
+            <input id="goalName" placeholder="Goal name" required>
+            <input id="goalTarget" type="number" min="1" placeholder="Target amount ₹" required>
+            <input id="goalCurrent" type="number" min="0" placeholder="Already saved ₹">
+            <input id="goalDeadline" type="date">
+            <button class="primary" type="submit">＋ Create Goal</button>
+          </form>
+        </div>
+        <div id="goalList" class="cards-list"></div>
+      </section>
+
+      <section id="budgets" class="screen">
+        <div class="page-heading"><p class="eyebrow">SPENDING LIMITS</p><h2>Budgets</h2><p class="muted">Set limits for your spending categories.</p></div>
+        <div class="form-card">
+          <h3>Set a Budget</h3>
+          <form id="budgetForm">
+            <select id="budgetCategory"><option>Food</option><option>Travel</option><option>Shopping</option><option>Bills</option><option>Education</option><option>Health</option><option>Other</option></select>
+            <input id="budgetAmount" type="number" min="1" placeholder="Monthly limit ₹" required>
+            <button class="primary" type="submit">＋ Save Budget</button>
+          </form>
+        </div>
+        <div id="budgetList" class="cards-list"></div>
+      </section>
+
+      <section id="analytics" class="screen">
+        <div class="page-heading"><p class="eyebrow">INSIGHTS</p><h2>Analytics</h2><p class="muted">Understand your spending patterns.</p></div>
+        <div class="panel"><h3>Expense Categories</h3><canvas id="categoryChart"></canvas></div>
+        <div class="panel"><h3>Financial Insights</h3><div id="insights" class="insights"></div></div>
+      </section>
+
+      <section id="settings" class="screen">
+        <div class="page-heading"><p class="eyebrow">CONTROL CENTER</p><h2>Settings</h2><p class="muted">Customize your finance workspace.</p></div>
+        <div class="panel settings-list">
+          <button id="currencyBtn">Currency: ₹ INR</button>
+          <button id="demoBtn">Load demo data</button>
+          <button id="clearBtn" class="danger">Delete all local data</button>
+          <div class="about"><b>FINANCE MANAGER MAX</b><p class="muted">Your data stays in this browser. This is a local-storage prototype.</p></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button data-go="dashboard" class="nav-item active">⌂<span>Home</span></button>
+      <button data-go="expenses" class="nav-item">↘<span>Money</span></button>
+      <button data-go="loans" class="nav-item">↻<span>Loans</span></button>
+      <button data-go="analytics" class="nav-item">▥<span>Insights</span></button>
+      <button data-go="settings" class="nav-item">⚙<span>More</span></button>
+    </nav>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>
